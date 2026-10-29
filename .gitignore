@@ -1,0 +1,12 @@
+# market data is licensed - never commit it
+data/
+*.parquet
+*.dbn
+*.dbn.zst
+
+# local / secrets
+.env
+*.key
+__pycache__/
+*.pyc
+.claude/
