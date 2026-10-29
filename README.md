@@ -48,7 +48,7 @@ Only 86 of 927 variants from the later research rounds were profitable in both 2
 
 Each day, measure how far Nasdaq futures normally move away from the open by each time of day (14-day average). That defines a "noise band" around the open. Every 30 minutes between 10:00 and 15:30 ET, if price closes outside the band in the same direction as the overnight gap, enter in that direction. Exit at 3× the noise distance (target), 0.5× (stop), when price falls back inside the band, or at the close.
 
-An extra filter found: skip the day after an unusually large move, based on Daniel & Moskowitz's "momentum crashes" (2016) this improved it slightly (profit factor 1.13 / 1.38 / 1.37).
+An extra filter, skip the day after an unusually large move, based on Daniel & Moskowitz's "momentum crashes" (2016) this improved it slightly (profit factor 1.13 / 1.38 / 1.37).
 
 ## What didn't work (selection)
 
@@ -74,7 +74,7 @@ A side analysis modelled futures "prop-firm evaluation" accounts (reach a profit
 
 ## How this was built
 
-I used Claude to scan the internet for research papers and report back with findings. I would then sort through the research papers, picking out the ones that seemed the most promising. I would then have Claude back test across 3 different periods, 2015-2022, 2023-2026, and 2010-2014. 2010-2014 wasn't initially included in the back test periods, but after finding out the noise strategy was profitable across 2015-22 and 2023-2026, I decided to run an additional back test to further confirm it held up. I then sorted through each strategies results, mainly looking for smooth equity curves, decent trade counts (at least 0.3 per day), and consistency across periods. One strategy in particular, centered around a long position during the overnight hours, looked profitable (1.5 PF), but I chose not to include it because I believe in a bear trend it would crumble. By the end, I had the noise strategy on NQ and the RSI-fade strategy on RTY. Ideally, I wanted to have a GC or CL algorithm as well, but I found it hard to build something that was profitable across both periods, which I theorize is due to a regime change around 2023.
+I used Claude to scan the internet for research papers and report back with findings. I would then sort through the research papers, picking out the ones that seemed the most promising. Claude would then backtest across 3 differnent periods, 2015-2022, 2023-2026, and 2010-2014. 2010-2014 wasn't initially included in the back test periods, but after finding the noise strategy was profitable across 2015-22 and 2023-2026, I decided to run an additional back test to further confirm it held up. I then sorted through each strategies results, mainly looking for smooth equity curves, decent trade counts (at least 0.3 per day), and consistency across periods. One strategy in particular, centered around a long position during the overnight hours, looked profitable (1.5 PF), but I chose not to include it because I believe in a bear trend it would crumble. By the end, I had the noise strategy on NQ and the RSI-fade strategy on RTY. Ideally, I wanted to have a GC or CL algorithm as well, but I found it hard to build something that was profitable across both periods, which I theorize is due to a regime change around 2023.
 
 ## Repository layout
 
