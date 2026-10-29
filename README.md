@@ -2,7 +2,7 @@
 
 An independent research project testing whether published intraday trading strategies still work on CME futures once realistic trading costs are included.
 
-**Short answer:** mostly no. Of ~1,300 variants built from ~40 academic papers, nearly all fail after costs or in later years. One Nasdaq intraday-momentum strategy held up in every test period — including a holdout that was never used to make decisions — and one Russell 2000 mean-reversion strategy adds diversification.
+**Short answer:** For the most part, no. Of ~1,300 variants built from ~40 academic papers, nearly all failed after costs or didn't hold up across all test periods. One Nasdaq intraday-momentum strategy held up in every test period, including a holdout period, tested after the strategy showed consistency across other test periods. Additionally, one Russell 2000 mean-reversion strategy held up with low correlation to the other, effectively diversifying the backtest portfolio.  
 
 > All results are backtests, net of estimated costs. Nothing here is live performance or investment advice.
 
@@ -30,7 +30,7 @@ Only 86 of 927 variants from the later research rounds were profitable in both 2
 ## Data
 
 - **Source:** Databento CME 1-minute OHLCV, continuous front-month contracts.
-- **Markets:** Nasdaq-100 (NQ), S&P 500 (ES), Dow (YM), Russell 2000 (RTY), gold (MGC), crude oil (CL), 10-year note (ZN), euro FX (6E).
+- **Markets Tested:** Nasdaq-100 (NQ), S&P 500 (ES), Dow (YM), Russell 2000 (RTY), gold (MGC), crude oil (CL), 10-year note (ZN), euro FX (6E).
 - **Periods:** NQ 2010–2026; others 2015–2026 (crude from late 2022).
 - **Cleaning:** one regular-session grid per day; half days dropped; days with a contract change excluded from anything that uses the previous close; one truncated download was recovered and stitched.
 - Raw data is **not included** (licence). `src/download_databento.py` re-downloads it with your own API key and prints the cost before buying anything.
@@ -40,7 +40,7 @@ Only 86 of 927 variants from the later research rounds were profitable in both 2
 1. **Rebuild each paper's rule simply**, then run it as a grid across all 8 markets.
 2. **Costs:** 4 ticks per round trip on every trade (e.g., 1 index point on NQ). Results in basis points of notional so markets are comparable.
 3. **Two independent halves:** 2015–22 and 2023–26; a strategy must be profitable in both.
-4. **Holdout:** NQ 2010–14 was downloaded only after the final configuration was frozen, and used once.
+4. **Holdout:** NQ 2010–14 was downloaded only after a strategy proved consistent across 2015-2026, and used once.
 5. **Overfitting checks:** parameter-stability sweeps (plateau or spike?), train→test rank correlation across all configurations (an early filter family scored −0.49 and was rejected; the RSI fade scored 0.64), cost stress at 2/4/6/8 ticks, and control groups.
 6. **Multiple testing:** with ~1,300 variants, some pass by chance — anything that passed was re-tested before being accepted.
 
@@ -48,13 +48,13 @@ Only 86 of 927 variants from the later research rounds were profitable in both 2
 
 Each day, measure how far Nasdaq futures normally move away from the open by each time of day (14-day average). That defines a "noise band" around the open. Every 30 minutes between 10:00 and 15:30 ET, if price closes outside the band in the same direction as the overnight gap, enter in that direction. Exit at 3× the noise distance (target), 0.5× (stop), when price falls back inside the band, or at the close.
 
-An extra filter — skip the day after an unusually large move, based on Daniel & Moskowitz's "momentum crashes" (2016) — improved it slightly (profit factor 1.13 / 1.38 / 1.37).
+An extra filter found: skip the day after an unusually large move, based on Daniel & Moskowitz's "momentum crashes" (2016) this improved it slightly (profit factor 1.13 / 1.38 / 1.37).
 
 ## What didn't work (selection)
 
 | Idea | Source | Result |
 |---|---|---|
-| Last-30-minute momentum | Gao et al. 2018; Baltussen et al. 2021 | Reverses on futures; loses in every market |
+| Last-30-minute momentum | Gao et al. 2018; Baltussen et al. 2021 | Reverses on futures; lost in every market |
 | VWAP trend, VWAP fades, anchored VWAPs | Zarattini & Aziz 2023; practitioner rules | Only NQ variants pass, and they duplicate the core strategy (correlation ~0.5) |
 | Opening-range breakout | Zarattini & Aziz 2023 | Positive on NQ in some periods only; fails the holdout |
 | Order flow, jumps, lead-lag, round numbers (20 high-frequency ideas) | various | 0 of 20 survive 4-tick costs |
@@ -68,13 +68,13 @@ A side analysis modelled futures "prop-firm evaluation" accounts (reach a profit
 ## Limitations
 
 - Backtests only; no live track record yet.
-- Some filters were chosen on 2015–26 data; the 2010–14 holdout is the honest estimate (weaker: profit factor ~1.1).
+- Some filters were chosen on 2015–26 data; the 2010–14 holdout is the most realistic estimate (weaker with a profit factor of ~1.1).
 - Minute bars cannot show exact fills inside a bar; stops are assumed filled at the stop price or worse.
 - Published anomalies often weaken after publication; the core strategy's paper is from 2024.
 
 ## How this was built
 
-I used Claude (an AI coding assistant) to write most of the code. My part was the research design: choosing the questions and papers, defining the validation rules (frozen holdout, two-half test, cost model), reviewing every result, and deciding what to keep or reject — for example, rejecting an overnight strategy that looked profitable but was really just market exposure, and insisting on historical-replay simulations after the random-day version looked too optimistic.
+I used Claude to scan the internet for research papers and report back with findings. I would then sort through the research papers, picking out the ones that seemed the most promising. I would then have Claude back test across 3 different periods, 2015-2022, 2023-2026, and 2010-2014. 2010-2014 wasn't initially included in the back test periods, but after finding out the noise strategy was profitable across 2015-22 and 2023-2026, I decided to run an additional back test to further confirm it held up. I then sorted through each strategies results, mainly looking for smooth equity curves, decent trade counts (at least 0.3 per day), and consistency across periods. One strategy in particular, centered around a long position during the overnight hours, looked profitable (1.5 PF), but I chose not to include it because I believe in a bear trend it would crumble. By the end, I had the noise strategy on NQ and the RSI-fade strategy on RTY. Ideally, I wanted to have a GC or CL algorithm as well, but I found it hard to build something that was profitable across both periods, which I theorize is due to a regime change around 2023.
 
 ## Repository layout
 
@@ -109,4 +109,4 @@ python make_figures.py
 ```
 
 ---
-Dylan Bryant · Business Analytics, Western Washington University · [LinkedIn]
+Dylan Bryant · Business Analytics, Western Washington University · https://www.linkedin.com/in/dylanbryant28/
