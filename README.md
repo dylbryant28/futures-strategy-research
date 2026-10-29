@@ -2,7 +2,7 @@
 
 An independent research project testing whether published intraday trading strategies still work on CME futures once realistic trading costs are included.
 
-**Short answer:** For the most part, no. Of ~1,300 variants built from ~40 academic papers, nearly all failed after costs or didn't hold up across all test periods. One Nasdaq intraday-momentum strategy held up in every test period, including a holdout period, tested after the strategy showed consistency across other test periods. Additionally, one Russell 2000 mean-reversion strategy held up with low correlation to the Nasdaq Strategy, effectively diversifying the backtest portfolio.  
+**Short answer:** For the most part, no. Of ~1,300 variants built from ~40 academic papers, nearly all failed after costs or didn't hold up across all test periods. One Nasdaq intraday-momentum strategy held up in every test period, including a holdout period, tested after the strategy showed consistency across other test periods. Additionally, one Russell 2000 mean-reversion strategy held up with low correlation to the Nasdaq strategy, effectively diversifying the backtest portfolio.  
 
 > All results are backtests, net of estimated costs. Nothing here is live performance or investment advice.
 
@@ -48,7 +48,7 @@ Only 86 of 927 variants from the later research rounds were profitable in both 2
 
 Each day, measure how far Nasdaq futures normally move away from the open by each time of day (14-day average). That defines a "noise band" around the open. Every 30 minutes between 10:00 and 15:30 ET, if price closes outside the band in the same direction as the overnight gap, enter in that direction. Exit at 3× the noise distance (target), 0.5× (stop), when price falls back inside the band, or at the close.
 
-An extra filter, skip the day after an unusually large move, based on Daniel & Moskowitz's "momentum crashes" (2016) this improved it slightly (profit factor 1.13 / 1.38 / 1.37).
+An extra filter, skipping the day after an unusually large move (based on Daniel & Moskowitz's "momentum crashes" 2016) improved it slightly (profit factor 1.13 / 1.38 / 1.37).
 
 ## What didn't work (selection)
 
@@ -74,7 +74,7 @@ A side analysis modelled futures "prop-firm evaluation" accounts (reach a profit
 
 ## How this was built
 
-I used Claude to scan the internet for research papers and report back with findings. I would then sort through the research papers, picking out the ones that seemed the most promising. Claude would then backtest across 3 different periods, 2015-2022, 2023-2026, and 2010-2014. 2010-2014 wasn't initially included in the backtest periods, but after finding the noise strategy was profitable across 2015-22 and 2023-2026, I decided to run an additional backtest to further confirm it held up. I then sorted through each strategies results, mainly looking for smooth equity curves, decent trade counts (at least 0.3 per day), and consistency across periods. One strategy in particular, centered around a long position during the overnight hours, looked profitable (1.1-1.2 PF), but I chose not to include it because I believe in a bear trend it would crumble. By the end, I had the noise strategy on NQ and the RSI-fade strategy on RTY. Ideally, I wanted to have a GC or CL algorithm as well, but I found it hard to build something that was profitable across both periods, which I theorize is due to a regime change around 2023.
+I used Claude to scan the internet for research papers and report back with findings. I would then sort through the research papers, picking out the ones that seemed the most promising. Claude wrote the code and backtested each strategy across 3 different periods, 2015-2022, 2023-2026, and 2010-2014. 2010-2014 wasn't initially included in the backtest periods, but after finding the noise strategy was profitable across 2015-22 and 2023-2026, I decided to run an additional backtest to further confirm it held up. I then sorted through each strategy's results, mainly looking for smooth equity curves, decent trade counts (at least 0.3 per day), and consistency across periods. One strategy in particular, centered around a long position during the overnight hours, looked profitable (1.1-1.2 PF), but I chose not to include it because I believed it would crumble in a bear trend. By the end, I had the noise strategy on NQ and the RSI-fade strategy on RTY. Ideally, I wanted to have a GC or CL algorithm as well, but I found it hard to build something that was profitable across both periods, which I theorize is due to a regime change around 2023.
 
 ## Repository layout
 
